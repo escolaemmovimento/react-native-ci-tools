@@ -14,7 +14,7 @@ const processUpdates = (payload, strategy) =>
             }));
     }).then(iosProjectValidPath => Promise.all([
         plist.process(iosProjectValidPath, payload, strategy), // process IOS plist files
-        
+        xcodeproj.process(iosProjectValidPath, payload, strategy)
     ])
     ).catch(error => {
         strategy.utils.log.error(error);
