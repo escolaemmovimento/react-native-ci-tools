@@ -1,9 +1,18 @@
 const xcodeProjFileBasePath = '*.xcodeproj';
 
 const process = (iosProjectPath, payload, strategy) => {
-    const xcodeProjPath = `${iosProjectPath}/${xcodeProjFileBasePath}`;
+    const xcodeProjPattern = `${iosProjectPath}/${xcodeProjFileBasePath}`;
     strategy.utils.log.info(`Cheking xcodeproj file ${xcodeProjFileBasePath}`);
-    return strategy.utils.checkPath(strategy.fileSystem, xcodeProjPath, false)
+    return strategy.utils.globSearch(strategy.globber, xcodeProjPattern, false)
+        .then(fileSearchResults => {
+            if (fileSearchResults) {
+                if (fileSearchResults.length == 1) {
+                    return fileSearchResults[0];
+                }
+                throw new Error(`Unable to determine iOS Project file, found (${fileSearchResults.length}) matches`);
+            }
+            throw new Error(`Unable to find iOS Project file, search directory (${fileSearchResults.length}) matches`);
+        })
         .then(iosProjectFilePath => {
             strategy.utils.log.sucess(`+ iOS Project file is accessable and writeable was`);
             strategy.utils.log.info(`Reading iOS Project file`);
