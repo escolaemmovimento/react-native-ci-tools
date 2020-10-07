@@ -1,4 +1,5 @@
 const plist = require('./plist');
+const xcodeproj = require('./xcodeproj');
 
 const processUpdates = (payload, strategy) =>
     new Promise((resolve, reject) => {
@@ -11,7 +12,10 @@ const processUpdates = (payload, strategy) =>
                 strategy.utils.log.info(`Checking ios project path (${payload.iosProjectSubDir})`);
                 return strategy.utils.checkPath(strategy.fileSystem, `${basePath}/${payload.iosProjectSubDir}`, true);
             }));
-    }).then(iosProjectValidPath => plist.process(iosProjectValidPath, payload, strategy) // process IOS plist files
+    }).then(iosProjectValidPath => Promise.all([
+        plist.process(iosProjectValidPath, payload, strategy), // process IOS plist files
+        
+    ])
     ).catch(error => {
         strategy.utils.log.error(error);
         throw error;
